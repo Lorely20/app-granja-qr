@@ -68,7 +68,11 @@ export default function Formulario() {
             <Input label="Fecha" name="fecha" type="date" register={register} error={errors} />
             <div className="flex flex-col">
               <label className="mb-1 font-medium text-sm">Galera</label>
-              <select {...register("galera_id")} className="w-full p-2 border border-gray-300 bg-white shadow-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <select 
+              name="galera_id" 
+              {...register("galera_id")}
+             className="w-full p-2 border border-gray-300 bg-white shadow-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
                 <option value="">Selecciona una galera</option>
                 <option value="1">Galera 1</option>
                 <option value="2">Galera 2</option>
@@ -104,6 +108,7 @@ function Input({ label, name, type = "text", register, error }) {
       <label className="mb-1 font-medium text-sm">{label}</label>
       <input
         type={type}
+        name={name} 
         {...register(name, { valueAsNumber: type === "number" })}
         className="w-full p-2 border border-gray-300 bg-white shadow-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
@@ -111,3 +116,4 @@ function Input({ label, name, type = "text", register, error }) {
     </div>
   );
 }
+
