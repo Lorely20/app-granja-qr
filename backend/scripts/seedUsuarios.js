@@ -27,6 +27,13 @@ const usuarios = [
     password: "trabajador789",
     rol: "trabajador",
   },
+   {
+    nombre: "supervisor",
+    email: "super@correo.com",
+    password: "super123",
+    rol: "supervisor",
+  },
+  
 ];
 
 async function seed() {
@@ -40,14 +47,14 @@ async function seed() {
        ON CONFLICT (email) DO NOTHING`,
       [user.nombre, user.email, hashed, user.rol]
     );
-    console.log(`✅ Usuario creado o existente: ${user.email}`);
+    console.log(`Usuario creado o existente: ${user.email}`);
   }
 
-  console.log("✅ Seed completo");
+  console.log("Seed completo");
   process.exit();
 }
 
 seed().catch((err) => {
-  console.error("❌ Error al hacer seed:", err);
+  console.error("Error al hacer seed:", err);
   process.exit(1);
 });
