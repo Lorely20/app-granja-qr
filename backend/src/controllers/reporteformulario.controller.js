@@ -1,26 +1,45 @@
 const db = require('../config/db');
 
 exports.reporteFormulario = async (req, res) => {
-  const { desde, hasta, colaborador_id, galera_id } = req.query;
+  const { desde, hasta, colaborador_id, galera_id, ciclo_id } = req.query;
 
   let query = `
     SELECT rf.*, c.nombre AS colaborador_nombre
     FROM reportes_diarios rf
     JOIN colaboradores c ON rf.colaborador_id = c.id
-    WHERE rf.fecha BETWEEN $1 AND $2
+    JOIN ciclos ci 
+      ON rf.fecha BETWEEN ci.fecha_inicio AND COALESCE(ci.fecha_fin, CURRENT_DATE)
   `;
-  const params = [desde, hasta];
-  let i = 3;
+  
+  let conditions = [];
+  const params = [];
+  let i = 1;
+
+  if (desde && hasta) {
+    conditions.push(`rf.fecha BETWEEN $${i++} AND $${i++}`);
+    params.push(desde, hasta);
+  }
 
   if (colaborador_id) {
-    query += ` AND rf.colaborador_id = $${i++}`;
+    conditions.push(`rf.colaborador_id = $${i++}`);
     params.push(colaborador_id);
   }
 
   if (galera_id) {
-    query += ` AND rf.galera_id = $${i++}`;
+    conditions.push(`rf.galera_id = $${i++}`);
     params.push(galera_id);
   }
+
+  if (ciclo_id) {
+    conditions.push(`ci.id = $${i++}`);
+    params.push(ciclo_id);
+  }
+
+  if (conditions.length > 0) {
+    query += ` WHERE ` + conditions.join(' AND ');
+  }
+
+  query += ` ORDER BY rf.fecha DESC`;
 
   try {
     const result = await db.query(query, params);

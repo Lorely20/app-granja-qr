@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaHome, FaSignOutAlt, FaClipboardList, FaSignInAlt, FaBars } from "react-icons/fa";
+import { FaHome, FaSignOutAlt, FaClipboardList, FaSignInAlt, FaBars, FaSync } from "react-icons/fa"; // <-- añadimos FaSync como ícono de ciclos
 import { useAuth } from "../../context/AuthContext";
 
 export default function Layout({ children }) {
@@ -23,6 +23,7 @@ export default function Layout({ children }) {
       ? [
           { label: "Reporte Asistencia", path: "/supervisor/reportes/asistencia", icon: <FaClipboardList /> },
           { label: "Reporte Diario", path: "/supervisor/reportes/formulario", icon: <FaClipboardList /> },
+          { label: "Ciclos", path: "/supervisor/ciclos", icon: <FaSync /> }, // 🚀 añadimos aquí
         ]
       : []),
     {

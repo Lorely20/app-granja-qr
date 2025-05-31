@@ -33,6 +33,10 @@ export default function LoginForm() {
     }
   };
 
+  const handleRegresar = () => {
+    navigate("/inicio");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow">
@@ -66,6 +70,14 @@ export default function LoginForm() {
             disabled={loading}
           >
             {loading ? "Cargando..." : "Iniciar sesión"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleRegresar}
+            className="w-full mt-2 bg-gray-300 text-gray-800 py-2 rounded-md hover:bg-gray-400 transition"
+          >
+            Regresar
           </button>
         </form>
       </div>

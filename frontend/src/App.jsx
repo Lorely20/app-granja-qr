@@ -13,8 +13,7 @@ import LoginForm from "./pages/LoginForm";
 import Trabajador from "./pages/Trabajador";
 import Supervisor from "./pages/supervisor";
 import AdminDashboard from "./pages/AdminDashboard";
-
-
+import SupervisorCiclos from "./pages/SupervisorCiclos"; 
 
 export default function App() {
   return (
@@ -78,6 +77,16 @@ export default function App() {
               </ProtectedRoute>
              }
             />
+            <Route
+              path="/supervisor/ciclos" 
+              element={
+                <ProtectedRoute role="supervisor">
+                  <SupervisorCiclos/>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin */}
             <Route
               path="/admin/*"
              element={

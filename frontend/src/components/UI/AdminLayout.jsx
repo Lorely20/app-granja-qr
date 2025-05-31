@@ -22,7 +22,7 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
+
       <aside
         className={`fixed inset-y-0 left-0 bg-white shadow-md p-4 w-64 space-y-4 transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -51,9 +51,7 @@ export default function AdminLayout({ children }) {
         </nav>
       </aside>
 
-      {/* Main Content */}
       <div className="flex flex-col flex-1">
-        {/* Header */}
         <header className="bg-white shadow px-4 py-3 flex items-center justify-between w-full fixed top-0 left-0 z-50">
           <div className="flex items-center space-x-4">
             <button
@@ -62,7 +60,7 @@ export default function AdminLayout({ children }) {
             >
               <FaBars className="w-6 h-6" />
             </button>
-            <h1 className="text-xl font-bold text-blue-600">Panel Admin</h1>
+            <h1 className="text-xl font-bold text-blue-600">Menú</h1>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm font-medium text-gray-600">
@@ -77,7 +75,6 @@ export default function AdminLayout({ children }) {
           </div>
         </header>
 
-        {/* Content */}
         <main className="pt-16 flex-1 ml-0 md:ml-64 overflow-y-auto p-4">
           {children}
         </main>

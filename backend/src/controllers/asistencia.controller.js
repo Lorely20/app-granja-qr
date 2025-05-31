@@ -1,38 +1,22 @@
 const db = require('../config/db');
+const { DateTime } = require("luxon");
 
 exports.registrarAsistencia = async (req, res) => {
-  const { colaborador_id, tipo, fecha } = req.body;
+  const { colaborador_id, tipo } = req.body;
 
   if (!tipo || !['entrada', 'salida'].includes(tipo)) {
     return res.status(400).json({ error: "Tipo de asistencia inválido" });
   }
 
-  if (!fecha) {
-    return res.status(400).json({ error: "La fecha es obligatoria" });
-  }
+  const fechaActualGuatemala = DateTime.now().setZone('America/Guatemala');
+  const fechaHoyISO = fechaActualGuatemala.toISODate(); 
 
-  const fechaHoy = new Date();
-  fechaHoy.setHours(0, 0, 0, 0);
-
-  const fechaIngresada = new Date(fecha);
-  const fechaIngresadaSoloFecha = new Date(fechaIngresada);
-  fechaIngresadaSoloFecha.setHours(0, 0, 0, 0);
-
-  if (fechaIngresadaSoloFecha < fechaHoy) {
-    return res.status(400).json({ error: "No se permite registrar asistencia en fechas pasadas" });
-  }
-
-  if (fechaIngresadaSoloFecha > fechaHoy) {
-    return res.status(400).json({ error: "No se permite registrar asistencia en fechas futuras" });
-  }
-
-  
-  const horaExacta = fechaIngresada.toTimeString().split(' ')[0]; // HH:MM:SS
+  const horaExacta = fechaActualGuatemala.toFormat('HH:mm:ss');
 
   try {
     const result = await db.query(
       `SELECT * FROM asistencias WHERE colaborador_id = $1 AND fecha = $2`,
-      [colaborador_id, fechaHoy.toISOString().split("T")[0]] 
+      [colaborador_id, fechaHoyISO]
     );
 
     const asistencia = result.rows[0];
@@ -42,7 +26,7 @@ exports.registrarAsistencia = async (req, res) => {
         const insert = await db.query(
           `INSERT INTO asistencias (colaborador_id, fecha, hora_entrada)
            VALUES ($1, $2, $3) RETURNING hora_entrada`,
-          [colaborador_id, fechaHoy.toISOString().split("T")[0], horaExacta]
+          [colaborador_id, fechaHoyISO, horaExacta]
         );
         return res.status(201).json({ mensaje: `Entrada registrada a las ${insert.rows[0].hora_entrada}` });
       } else {

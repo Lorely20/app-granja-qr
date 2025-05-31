@@ -7,7 +7,7 @@ import api from "../services/api";
 export default function AdminUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [modoFormulario, setModoFormulario] = useState("crear"); // 'crear' o 'editar'
+  const [modoFormulario, setModoFormulario] = useState("crear"); 
   const [usuarioEditar, setUsuarioEditar] = useState(null);
 
   const obtenerUsuarios = async () => {

@@ -2,16 +2,19 @@ import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
+import { obtenerCiclos } from "../services/ciclosApi";
 
 export default function ReporteSuper() {
   const [datos, setDatos] = useState([]);
   const [galeras, setGaleras] = useState([]);
   const [colaboradores, setColaboradores] = useState([]);
+  const [ciclos, setCiclos] = useState([]);
   const [filtros, setFiltros] = useState({
     desde: "",
     hasta: "",
     galera_id: "",
-    colaborador_id: ""
+    colaborador_id: "",
+    ciclo_id: ""
   });
 
   const fetchData = async () => {
@@ -25,9 +28,18 @@ export default function ReporteSuper() {
 
   useEffect(() => {
     api.get("/colaboradores").then(res => setColaboradores(res.data));
-    
     setGaleras(["G1", "G2", "G3"]);
+    cargarCiclos();
   }, []);
+
+  const cargarCiclos = async () => {
+    try {
+      const data = await obtenerCiclos();
+      setCiclos(data); // 🚀 Incluye todos los ciclos (abiertos y cerrados)
+    } catch (error) {
+      console.error("Error cargando ciclos:", error);
+    }
+  };
 
   const exportarExcel = () => {
     const wb = XLSX.utils.book_new();
@@ -42,7 +54,7 @@ export default function ReporteSuper() {
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Reporte Diario de Formulario</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
         <input
           type="date"
           value={filtros.desde}
@@ -73,6 +85,18 @@ export default function ReporteSuper() {
           <option value="">Todos</option>
           {colaboradores.map((c) => (
             <option key={c.id} value={c.id}>{c.nombre}</option>
+          ))}
+        </select>
+        <select
+          value={filtros.ciclo_id}
+          onChange={(e) => setFiltros({ ...filtros, ciclo_id: e.target.value })}
+          className="border px-2 py-1 rounded"
+        >
+          <option value="">Todos los ciclos</option>
+          {ciclos.map((c) => (
+            <option key={c.id} value={c.id}>
+              Ciclo {c.numero} ({c.anio}) - {c.estado}
+            </option>
           ))}
         </select>
       </div>
@@ -125,3 +149,4 @@ export default function ReporteSuper() {
     </div>
   );
 }
+

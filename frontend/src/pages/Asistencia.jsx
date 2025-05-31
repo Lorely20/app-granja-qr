@@ -2,19 +2,24 @@ import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import api from "../services/api";
 import Button from "../components/UI/Button";
+import { DateTime } from "luxon";
 
 export default function Asistencia() {
   const [mensaje, setMensaje] = useState("");
   const [scannerReady, setScannerReady] = useState(false);
   const [tipo, setTipo] = useState("entrada");
-  const [fecha, setFecha] = useState(() => new Date().toISOString().split("T")[0]);
+
+  const [fecha, setFecha] = useState(() =>
+    DateTime.now().setZone('America/Guatemala').toISODate()
+  );
+
   const [ultimoQrProcesado, setUltimoQrProcesado] = useState("");
   const [qrDetectado, setQrDetectado] = useState("");
   const qrRegionId = "qr-reader";
   const html5QrCodeRef = useRef(null);
 
   const esFechaHoy = (fechaStr) => {
-    const hoy = new Date().toISOString().split("T")[0];
+    const hoy = DateTime.now().setZone('America/Guatemala').toISODate();
     return fechaStr === hoy;
   };
 
@@ -77,7 +82,7 @@ export default function Asistencia() {
       const resColaborador = await api.get(`/colaboradores/qr/${qrDetectado}`);
       const colaboradorId = resColaborador.data.id;
 
-      const fechaHoraExacta = new Date().toISOString();  // 🎯 Incluye la hora exacta
+      const fechaHoraExacta = new Date().toISOString(); 
 
       const res = await api.post("/asistencia", {
         colaborador_id: colaboradorId,
@@ -118,8 +123,8 @@ export default function Asistencia() {
         <input
           type="date"
           value={fecha}
-          min={new Date().toISOString().split("T")[0]}
-          max={new Date().toISOString().split("T")[0]}
+          min={DateTime.now().setZone('America/Guatemala').toISODate()}
+          max={DateTime.now().setZone('America/Guatemala').toISODate()}
           onChange={(e) => {
             setFecha(e.target.value);
             console.log("Fecha seleccionada:", e.target.value);

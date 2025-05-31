@@ -74,7 +74,6 @@ exports.forzarLogout = async (req, res) => {
   }
 };
 
-//Listar usuarios
 exports.listarUsuarios = async (req, res) => {
   try {
     const result = await db.query("SELECT id, nombre, email, rol FROM usuarios ORDER BY nombre");
@@ -85,7 +84,6 @@ exports.listarUsuarios = async (req, res) => {
   }
 };
 
-//Crear usuario
 exports.crearUsuario = async (req, res) => {
   const { error } = usuarioCrearSchema.validate(req.body);
   if (error) {
@@ -106,7 +104,6 @@ exports.crearUsuario = async (req, res) => {
     res.status(500).json({ error: "Error al crear usuario" });
   }
 };
-//Actualizar usuario
 exports.actualizarUsuario = async (req, res) => {
   const { error } = usuarioActualizarSchema.validate(req.body);
   if (error) {
@@ -127,7 +124,7 @@ exports.actualizarUsuario = async (req, res) => {
     res.status(500).json({ error: "Error al actualizar usuario" });
   }
 };
-//Eliminar usuario
+
 exports.eliminarUsuario = async (req, res) => {
   const { id } = req.params;
 
@@ -158,10 +155,10 @@ exports.crearCiclo = async (req, res) => {
   }
 
   try {
-    // Calcular la fecha fin (65 semanas)
+    
     const fechaInicioObj = new Date(fecha_inicio);
     const fechaFinObj = new Date(fechaInicioObj);
-    fechaFinObj.setDate(fechaFinObj.getDate() + 65 * 7); // 65 semanas * 7 días
+    fechaFinObj.setDate(fechaFinObj.getDate() + 65 * 7); 
 
     const result = await db.query(`
       INSERT INTO ciclos (numero, anio, fecha_inicio, fecha_fin, saldo_inicial_hembras, saldo_inicial_machos)
@@ -176,7 +173,7 @@ exports.crearCiclo = async (req, res) => {
   }
 };
 
-// Actualizar un ciclo existente
+
 exports.actualizarCiclo = async (req, res) => {
   const { id } = req.params;
   const { numero, anio, fecha_inicio, saldo_inicial_hembras, saldo_inicial_machos, estado } = req.body;
@@ -204,7 +201,7 @@ exports.actualizarCiclo = async (req, res) => {
   }
 };
 
-// Cerrar un ciclo
+
 exports.cerrarCiclo = async (req, res) => {
   const { id } = req.params;
 
@@ -222,7 +219,6 @@ exports.cerrarCiclo = async (req, res) => {
   }
 };
 
-// Eliminar un ciclo (opcional)
 exports.eliminarCiclo = async (req, res) => {
   const { id } = req.params;
 

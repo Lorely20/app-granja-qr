@@ -9,12 +9,11 @@ import {
 } from "../services/ciclosApi";
 
 export default function AdminConfig() {
-  // Configuración global
+ 
   const [empresa, setEmpresa] = useState("");
   const [idioma, setIdioma] = useState("es");
   const [emailSoporte, setEmailSoporte] = useState("");
 
-  // Ciclos
   const [nombreCiclo, setNombreCiclo] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
@@ -134,7 +133,6 @@ export default function AdminConfig() {
         Configuración del Sistema
       </h2>
 
-      {/* Configuración global */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block font-semibold mb-1">

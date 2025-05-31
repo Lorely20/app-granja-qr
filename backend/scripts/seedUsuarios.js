@@ -1,36 +1,35 @@
-// scripts/seedUsuarios.js
 const bcrypt = require("bcryptjs");
 const db = require('../src/config/db'); 
 
 const usuarios = [
   {
     nombre: "Admin",
-    email: "admin@correo.com",
-    password: "admin123",
+    email: "administrador@gmail.com",
+    password: "admin008",
     rol: "admin",
   },
   {
     nombre: "Luis Torres",
-    email: "t1@correo.com",
-    password: "trabajador123",
+    email: "luistorrest001@gmail.com",
+    password: "trabajador001",
     rol: "trabajador",
   },
   {
     nombre: "Maria Gómez",
-    email: "t2@correo.com",
-    password: "trabajador456",
+    email: "mariagomezt002@gmail.com",
+    password: "trabajador002",
     rol: "trabajador",
   },
   {
     nombre: "Jorge Díaz",
-    email: "t3@correo.com",
-    password: "trabajador789",
+    email: "jorgediaz@gmail.com",
+    password: "trabajador003",
     rol: "trabajador",
   },
    {
     nombre: "supervisor",
-    email: "super@correo.com",
-    password: "super123",
+    email: "supervisor@gmail.com",
+    password: "super004",
     rol: "supervisor",
   },
   
