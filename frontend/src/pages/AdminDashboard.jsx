@@ -1,27 +1,23 @@
-import React, { useState } from "react";
-import AdminUsuarios from "./AdminUsuarios";
-import AdminLogs from "./AdminLogs";
-import AdminConfig from "./AdminConfig";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AdminLayout from "../components/UI/AdminLayout";
+import AdminUsuarios from "./AdminUsuarios";
+import AdminConfig from "./AdminConfig";
+import AdminLogs from "./AdminLogs";
+import AdminHome from "./AdminHome"; 
 
-function AdminDashboard() {
-  const [vista, setVista] = useState("usuarios");
-
-  const renderVista = () => {
-    switch (vista) {
-      case "usuarios": return <AdminUsuarios />;
-      case "logs": return <AdminLogs />;
-      case "configuracion": return <AdminConfig />;
-      default: return <AdminUsuarios />;
-    }
-  };
-
+export default function AdminDashboard() {
   return (
     <AdminLayout>
-      {/* */}
-      {renderVista()}
+      <Routes>
+        <Route path="/" element={<AdminHome />} />
+        <Route path="usuarios" element={<AdminUsuarios />} />
+        <Route path="config" element={<AdminConfig />} />
+        <Route path="logs" element={<AdminLogs />} />
+       
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Routes>
     </AdminLayout>
   );
 }
 
-export default AdminDashboard;

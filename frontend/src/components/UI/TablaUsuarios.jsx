@@ -1,29 +1,35 @@
 import React from "react";
 import Button from "./Button";
 
-export default function TablaUsuarios({ usuarios, onEliminar }) {
+export default function TablaUsuarios({ usuarios, onEliminar, onEditar }) {
   return (
     <div className="overflow-x-auto shadow rounded-xl">
-      <table className="min-w-full divide-y divide-gray-200">
+      <table className="min-w-full divide-y divide-gray-200 text-sm">
         <thead className="bg-blue-100">
           <tr>
-            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Nombre</th>
-            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Email</th>
-            <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Rol</th>
-            <th className="px-4 py-2 text-center text-sm font-semibold text-gray-700">Acciones</th>
+            <th className="px-2 py-2 text-left font-semibold text-gray-700">Nombre</th>
+            <th className="px-2 py-2 text-left font-semibold text-gray-700">Email</th>
+            <th className="px-2 py-2 text-left font-semibold text-gray-700">Rol</th>
+            <th className="px-2 py-2 text-center font-semibold text-gray-700">Acciones</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 bg-white">
           {usuarios.map((usuario) => (
-            <tr key={usuario.id}>
-              <td className="px-4 py-2 text-sm text-gray-800">{usuario.nombre}</td>
-              <td className="px-4 py-2 text-sm text-gray-800">{usuario.email}</td>
-              <td className="px-4 py-2 text-sm text-gray-800 capitalize">{usuario.rol}</td>
-              <td className="px-4 py-2 text-center space-x-2">
-                <Button className="bg-yellow-500 hover:bg-yellow-600" onClick={() => alert("Editar usuario")}>
+            <tr key={usuario.id} className="hover:bg-gray-50">
+              <td className="px-2 py-2">{usuario.nombre}</td>
+              <td className="px-2 py-2">{usuario.email}</td>
+              <td className="px-2 py-2 capitalize">{usuario.rol}</td>
+              <td className="px-2 py-2 text-center space-x-1">
+                <Button
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-1 rounded shadow transition-colors"
+                  onClick={() => onEditar(usuario)}
+                >
                   Editar
                 </Button>
-                <Button className="bg-red-600 hover:bg-red-700" onClick={() => onEliminar(usuario.id)}>
+                <Button
+                  className="bg-red-500 hover:bg-red-600 text-white font-semibold px-3 py-1 rounded shadow transition-colors"
+                  onClick={() => onEliminar(usuario.id)}
+                >
                   Eliminar
                 </Button>
               </td>
@@ -34,3 +40,4 @@ export default function TablaUsuarios({ usuarios, onEliminar }) {
     </div>
   );
 }
+

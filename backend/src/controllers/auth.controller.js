@@ -1,8 +1,14 @@
 const db = require('../config/db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { loginSchema } = require("../validations/authValidation");
 
 exports.login = async (req, res) => {
+  const { error } = loginSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { email, password } = req.body;
 
   try {

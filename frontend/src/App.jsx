@@ -12,11 +12,9 @@ import Layout from "./components/UI/Layout";
 import LoginForm from "./pages/LoginForm";
 import Trabajador from "./pages/Trabajador";
 import Supervisor from "./pages/supervisor";
-import AdminLayout from "./components/UI/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminUsuarios from "./pages/AdminUsuarios";
-import AdminLogs from "./pages/AdminLogs";
-import AdminConfig from "./pages/AdminConfig";
+
+
 
 export default function App() {
   return (
@@ -88,7 +86,6 @@ export default function App() {
            </ProtectedRoute>
              }
           />
-
           </Routes>
         </Layout>
       </Router>

@@ -1,5 +1,6 @@
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
+const { usuarioCrearSchema, usuarioActualizarSchema } = require("../validations/adminValidation");
 
 //Obtener logs del sistema
 exports.obtenerLogs = async (req, res) => {
@@ -76,7 +77,7 @@ exports.forzarLogout = async (req, res) => {
 //Listar usuarios
 exports.listarUsuarios = async (req, res) => {
   try {
-    const result = await db.query("SELECT id, nombre, email, rol, activo FROM usuarios ORDER BY nombre");
+    const result = await db.query("SELECT id, nombre, email, rol FROM usuarios ORDER BY nombre");
     res.json(result.rows);
   } catch (error) {
     console.error("Error al listar usuarios:", error);
@@ -86,6 +87,11 @@ exports.listarUsuarios = async (req, res) => {
 
 //Crear usuario
 exports.crearUsuario = async (req, res) => {
+  const { error } = usuarioCrearSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { nombre, email, password, rol } = req.body;
 
   try {
@@ -95,29 +101,32 @@ exports.crearUsuario = async (req, res) => {
       [nombre, email, hashed, rol]
     );
     res.status(201).json({ mensaje: "Usuario creado correctamente" });
-  } catch (error) {
-    console.error("Error al crear usuario:", error);
+  } catch (err) {
+    console.error("Error al crear usuario:", err);
     res.status(500).json({ error: "Error al crear usuario" });
   }
 };
-
 //Actualizar usuario
 exports.actualizarUsuario = async (req, res) => {
+  const { error } = usuarioActualizarSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { id } = req.params;
-  const { nombre, email, rol, activo } = req.body;
+  const { nombre, email, rol } = req.body;
 
   try {
     await db.query(
-      `UPDATE usuarios SET nombre=$1, email=$2, rol=$3, activo=$4 WHERE id=$5`,
-      [nombre, email, rol, activo, id]
+      `UPDATE usuarios SET nombre=$1, email=$2, rol=$3 WHERE id=$4`,
+      [nombre, email, rol, id]
     );
     res.json({ mensaje: "Usuario actualizado" });
-  } catch (error) {
-    console.error("Error al actualizar usuario:", error);
+  } catch (err) {
+    console.error("Error al actualizar usuario:", err);
     res.status(500).json({ error: "Error al actualizar usuario" });
   }
 };
-
 //Eliminar usuario
 exports.eliminarUsuario = async (req, res) => {
   const { id } = req.params;
@@ -138,5 +147,90 @@ exports.obtenerCiclos = async (req, res) => {
   } catch (error) {
     console.error("Error al obtener ciclos:", error);
     res.status(500).json({ error: "Error al obtener ciclos" });
+  }
+};
+
+exports.crearCiclo = async (req, res) => {
+  const { numero, anio, fecha_inicio, saldo_inicial_hembras, saldo_inicial_machos } = req.body;
+
+  if (!numero || !anio || !fecha_inicio || !saldo_inicial_hembras || !saldo_inicial_machos) {
+    return res.status(400).json({ error: "Todos los campos son obligatorios" });
+  }
+
+  try {
+    // Calcular la fecha fin (65 semanas)
+    const fechaInicioObj = new Date(fecha_inicio);
+    const fechaFinObj = new Date(fechaInicioObj);
+    fechaFinObj.setDate(fechaFinObj.getDate() + 65 * 7); // 65 semanas * 7 días
+
+    const result = await db.query(`
+      INSERT INTO ciclos (numero, anio, fecha_inicio, fecha_fin, saldo_inicial_hembras, saldo_inicial_machos)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *
+    `, [numero, anio, fecha_inicio, fechaFinObj, saldo_inicial_hembras, saldo_inicial_machos]);
+
+    res.status(201).json({ mensaje: "Ciclo creado exitosamente", ciclo: result.rows[0] });
+  } catch (error) {
+    console.error("Error al crear ciclo:", error);
+    res.status(500).json({ error: "Error al crear ciclo" });
+  }
+};
+
+// Actualizar un ciclo existente
+exports.actualizarCiclo = async (req, res) => {
+  const { id } = req.params;
+  const { numero, anio, fecha_inicio, saldo_inicial_hembras, saldo_inicial_machos, estado } = req.body;
+
+  if (!numero || !anio || !fecha_inicio || !saldo_inicial_hembras || !saldo_inicial_machos || !estado) {
+    return res.status(400).json({ error: "Todos los campos son obligatorios" });
+  }
+
+  try {
+    const fechaInicioObj = new Date(fecha_inicio);
+    const fechaFinObj = new Date(fechaInicioObj);
+    fechaFinObj.setDate(fechaFinObj.getDate() + 65 * 7);
+
+    await db.query(`
+      UPDATE ciclos
+      SET numero=$1, anio=$2, fecha_inicio=$3, fecha_fin=$4,
+          saldo_inicial_hembras=$5, saldo_inicial_machos=$6, estado=$7
+      WHERE id=$8
+    `, [numero, anio, fecha_inicio, fechaFinObj, saldo_inicial_hembras, saldo_inicial_machos, estado, id]);
+
+    res.json({ mensaje: "Ciclo actualizado exitosamente" });
+  } catch (error) {
+    console.error("Error al actualizar ciclo:", error);
+    res.status(500).json({ error: "Error al actualizar ciclo" });
+  }
+};
+
+// Cerrar un ciclo
+exports.cerrarCiclo = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query(`
+      UPDATE ciclos
+      SET estado='cerrado'
+      WHERE id=$1
+    `, [id]);
+
+    res.json({ mensaje: "Ciclo cerrado correctamente" });
+  } catch (error) {
+    console.error("Error al cerrar ciclo:", error);
+    res.status(500).json({ error: "Error al cerrar ciclo" });
+  }
+};
+
+// Eliminar un ciclo (opcional)
+exports.eliminarCiclo = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query("DELETE FROM ciclos WHERE id=$1", [id]);
+    res.json({ mensaje: "Ciclo eliminado correctamente" });
+  } catch (error) {
+    console.error("Error al eliminar ciclo:", error);
+    res.status(500).json({ error: "Error al eliminar ciclo" });
   }
 };

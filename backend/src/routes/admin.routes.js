@@ -12,6 +12,10 @@ router.get("/logs", adminCtrl.obtenerLogs);
 router.get('/config', adminCtrl.obtenerConfiguraciones);
 router.put('/config/:clave', adminCtrl.actualizarConfiguracion);
 router.get('/ciclos', adminCtrl.obtenerCiclos);
+router.post("/ciclos", adminCtrl.crearCiclo);
+router.put("/ciclos/:id", adminCtrl.actualizarCiclo);
+router.patch("/ciclos/:id/cerrar", adminCtrl.cerrarCiclo);
+router.delete("/ciclos/:id", adminCtrl.eliminarCiclo);
 
 // Sesiones
 router.get("/sesiones", adminCtrl.obtenerSesiones);

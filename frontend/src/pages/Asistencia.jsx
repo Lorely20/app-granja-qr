@@ -13,7 +13,6 @@ export default function Asistencia() {
   const qrRegionId = "qr-reader";
   const html5QrCodeRef = useRef(null);
 
-  // para validar si la fecha es hoy
   const esFechaHoy = (fechaStr) => {
     const hoy = new Date().toISOString().split("T")[0];
     return fechaStr === hoy;
@@ -53,15 +52,13 @@ export default function Asistencia() {
 
   const handleScanSuccess = (decodedText) => {
     const qrCode = decodedText.trim().toUpperCase();
-    if (qrCode === ultimoQrProcesado) return; // evitar repetido
+    if (qrCode === ultimoQrProcesado) return;
     setUltimoQrProcesado(qrCode);
     setQrDetectado(qrCode);
     console.log("QR capturado:", qrCode);
   };
 
-  const handleScanError = () => {
-    // Silencio para no saturar consola
-  };
+  const handleScanError = () => {};
 
   const registrarAsistencia = async () => {
     if (!qrDetectado) {
@@ -69,23 +66,23 @@ export default function Asistencia() {
       return;
     }
 
-   
     if (!esFechaHoy(fecha)) {
       setMensaje("⚠ Solo puedes registrar asistencia con la fecha de hoy.");
       return;
     }
 
     console.log("Registrando asistencia para:", qrDetectado);
-    console.log("Fecha seleccionada:", fecha);
 
     try {
       const resColaborador = await api.get(`/colaboradores/qr/${qrDetectado}`);
       const colaboradorId = resColaborador.data.id;
 
+      const fechaHoraExacta = new Date().toISOString();  // 🎯 Incluye la hora exacta
+
       const res = await api.post("/asistencia", {
         colaborador_id: colaboradorId,
         tipo,
-        fecha
+        fecha: fechaHoraExacta
       });
 
       console.log("Respuesta:", res.data);

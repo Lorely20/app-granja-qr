@@ -11,25 +11,28 @@ exports.registrarAsistencia = async (req, res) => {
     return res.status(400).json({ error: "La fecha es obligatoria" });
   }
 
-  // Validación de fechas
   const fechaHoy = new Date();
   fechaHoy.setHours(0, 0, 0, 0);
 
   const fechaIngresada = new Date(fecha);
-  fechaIngresada.setHours(0, 0, 0, 0);
+  const fechaIngresadaSoloFecha = new Date(fechaIngresada);
+  fechaIngresadaSoloFecha.setHours(0, 0, 0, 0);
 
-  if (fechaIngresada < fechaHoy) {
+  if (fechaIngresadaSoloFecha < fechaHoy) {
     return res.status(400).json({ error: "No se permite registrar asistencia en fechas pasadas" });
   }
 
-  if (fechaIngresada > fechaHoy) {
+  if (fechaIngresadaSoloFecha > fechaHoy) {
     return res.status(400).json({ error: "No se permite registrar asistencia en fechas futuras" });
   }
+
+  
+  const horaExacta = fechaIngresada.toTimeString().split(' ')[0]; // HH:MM:SS
 
   try {
     const result = await db.query(
       `SELECT * FROM asistencias WHERE colaborador_id = $1 AND fecha = $2`,
-      [colaborador_id, fecha]
+      [colaborador_id, fechaHoy.toISOString().split("T")[0]] 
     );
 
     const asistencia = result.rows[0];
@@ -38,8 +41,8 @@ exports.registrarAsistencia = async (req, res) => {
       if (!asistencia) {
         const insert = await db.query(
           `INSERT INTO asistencias (colaborador_id, fecha, hora_entrada)
-           VALUES ($1, $2, CURRENT_TIME) RETURNING hora_entrada`,
-          [colaborador_id, fecha]
+           VALUES ($1, $2, $3) RETURNING hora_entrada`,
+          [colaborador_id, fechaHoy.toISOString().split("T")[0], horaExacta]
         );
         return res.status(201).json({ mensaje: `Entrada registrada a las ${insert.rows[0].hora_entrada}` });
       } else {
@@ -57,8 +60,8 @@ exports.registrarAsistencia = async (req, res) => {
       }
 
       const update = await db.query(
-        `UPDATE asistencias SET hora_salida = CURRENT_TIME WHERE id = $1 RETURNING hora_salida`,
-        [asistencia.id]
+        `UPDATE asistencias SET hora_salida = $1 WHERE id = $2 RETURNING hora_salida`,
+        [horaExacta, asistencia.id]
       );
       return res.status(200).json({ mensaje: `Salida registrada a las ${update.rows[0].hora_salida}` });
     }
