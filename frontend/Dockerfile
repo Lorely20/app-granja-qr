@@ -1,13 +1,17 @@
-FROM node:18
-
+# Etapa de build
+FROM node:18 AS builder
 WORKDIR /app
-
-COPY package*.json ./
-RUN npm install --legacy-peer-deps
-
 COPY . .
+RUN npm install
+RUN npm run build
 
-ENV HOST=0.0.0.0
-EXPOSE 3000
+# Etapa de producción (usamos 'serve' para servir archivos estáticos)
+FROM node:18 AS production
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=builder /app/dist ./dist
 
-CMD ["npm", "run", "dev"]
+# Render usará esta variable para exponer el puerto
+ENV PORT=8080
+EXPOSE 8080
+CMD ["serve", "-s", "dist", "-l", "8080"]
