@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.VITE_API_URL, 
+  baseURL: "https://granja-umg.onrender.com/api", 
 });
 
 api.interceptors.request.use((config) => {
